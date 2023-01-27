@@ -1,5 +1,7 @@
 import { Droppable } from "react-beautiful-dnd";
+import { useForm } from "react-hook-form";
 import styled from "styled-components";
+import { IToDo } from "../atoms";
 import DragabbleCard from "./DragabbleCard";
 
 const BoardWrapper = styled.div`
@@ -28,19 +30,39 @@ const Area = styled.div<IAreaProps>`
   transition: background-color 0.3s ease-in-out;
   padding: 20px;
 `;
+
+const Form = styled.form`
+  width: 100%;
+  input {
+    width: 100%;
+  }
+`;
 interface IBoardProps {
-  toDos: string[];
+  toDos: IToDo[];
   boardId: string;
 }
 interface IAreaProps {
   isDraggingOver: boolean;
   isDraggingFromThis: boolean;
 }
-
+interface IForm {
+  toDo: string;
+}
 function Board({ toDos, boardId }: IBoardProps) {
+  const { register, setValue, handleSubmit } = useForm<IForm>();
+  const onValid = ({toDo}:IForm) => {
+    setValue("toDo","");
+  }
   return (
     <BoardWrapper>
       <Title>{boardId}</Title>
+      <Form onSubmit={handleSubmit(onValid)}>
+        <input
+          {...register("toDo", { required: true })}
+          type="text"
+          placeholder={`Add task on ${boardId}`}
+        />
+      </Form>
       <Droppable droppableId={boardId}>
         {(magic, snapshot) => (
           <Area
@@ -50,7 +72,7 @@ function Board({ toDos, boardId }: IBoardProps) {
             {...magic.droppableProps}
           >
             {toDos.map((toDo, index) => (
-              <DragabbleCard key={toDo} index={index} toDo={toDo} />
+              <DragabbleCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text} />
             ))}
             {magic.placeholder}
           </Area>
