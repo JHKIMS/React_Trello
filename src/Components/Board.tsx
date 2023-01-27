@@ -9,16 +9,22 @@ const BoardWrapper = styled.div`
   border-radius: 5px;
   min-height: 200px;
 `;
-
-interface IBoardProps{
-    toDos: string[];
-    boardId: string;
+const Title = styled.h2`
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 18px;
+`;
+interface IBoardProps {
+  toDos: string[];
+  boardId: string;
 }
-function Board({toDos, boardId} : IBoardProps) {
+function Board({ toDos, boardId }: IBoardProps) {
   return (
     <Droppable droppableId={boardId}>
       {(magic) => (
         <BoardWrapper ref={magic.innerRef} {...magic.droppableProps}>
+          <Title>{boardId}</Title>
           {toDos.map((toDo, index) => (
             <DragabbleCard key={toDo} index={index} toDo={toDo} />
           ))}
