@@ -4,8 +4,7 @@ import DragabbleCard from "./DragabbleCard";
 
 const BoardWrapper = styled.div`
   width: 300px;
-  padding: 20px 10px;
-  padding-top: 30px;
+  padding: 20px;
   background-color: ${(props) => props.theme.boardColor};
   border-radius: 5px;
   min-height: 300px;
@@ -19,17 +18,23 @@ const Title = styled.h2`
   font-size: 18px;
 `;
 const Area = styled.div<IAreaProps>`
-  background-color: ${(props) => (props.isDraggingOver ? "green" : props.isDraggingFromThis ? "red" : "blue")};
+  background-color: ${(props) =>
+    props.isDraggingOver
+      ? "#dfe6e9"
+      : props.isDraggingFromThis
+      ? "#636e72"
+      : "transparent"};
   flex-grow: 1;
   transition: background-color 0.3s ease-in-out;
+  padding: 20px;
 `;
 interface IBoardProps {
   toDos: string[];
   boardId: string;
 }
-interface IAreaProps{
-    isDraggingOver: boolean;
-    isDraggingFromThis: boolean;
+interface IAreaProps {
+  isDraggingOver: boolean;
+  isDraggingFromThis: boolean;
 }
 
 function Board({ toDos, boardId }: IBoardProps) {
