@@ -1,5 +1,7 @@
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { toDoState } from "./atoms";
 
 const Wrapper = styled.div`
   display: flex;
@@ -32,7 +34,18 @@ const Card = styled.div`
 
 const toDos = ["a", "b", "c", "d", "e", "f"];
 function App() {
-  const onDragEnd = () => {};
+  const [toDos, setToDos] = useRecoilState(toDoState);
+  const onDragEnd = ({draggableId, destination, source} : DropResult) => {
+    if(!destination) return; // destination이 아니라면 그냥 그대로 돌려주자.
+    setToDos(oldToDos => {
+      const copyToDos = [...oldToDos]
+      // 1. source.index 애서 item 삭제하기(내가 드래그 선택한 부분)
+      copyToDos.splice(source.index, 1);
+      // 2. 삭제한 item을 destination.index로 돌려주기(재정렬)
+      copyToDos.splice(destination?.index, 0, draggableId);
+      return copyToDos;
+    })
+  };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
@@ -41,7 +54,7 @@ function App() {
             {(magic) => (
               <Board ref={magic.innerRef} {...magic.droppableProps}>
                 {toDos.map((toDo, index) => (
-                  <Draggable draggableId={toDo} index={index}>
+                  <Draggable key={toDo} draggableId={toDo} index={index}>
                     {(magicDrag) => (
                       <Card
                         ref={magicDrag.innerRef}
